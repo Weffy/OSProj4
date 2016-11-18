@@ -4,10 +4,19 @@ import java.util.*;
 public class Scheduler {
 	static ArrayList<Task> queue = new ArrayList<Task>();
 	
+	/*
+	 * I suppose I could've just put all of the contents of createTasks in the constructor here
+	 * could go back and clean up by doing so...
+	 */
 	public Scheduler(int num_of_tasks) {
 		createTasks(num_of_tasks);		
 	}
-	
+	/*
+	 * creates a task object with a random duration
+	 * selection of schedulers are done here.
+	 * I don't like how I had to handle the task constructor here
+	 * more info in task class.
+	 */
 	private static void createTasks(int quantity) {
 		
 		for (int i = 0; i < quantity; i++) {
@@ -19,17 +28,24 @@ public class Scheduler {
 
 		}
 	}
-	
+	/*
+	 * random number generator
+	 */
 	private static int rng() {
 		Random rand = new Random();
 		int randomNumber = rand.nextInt(10000) + 1;
 		return randomNumber;
 	}
 	
+	/*
+	 * first in, first out scheduler
+	 */
 	private static void fifo(Task task) {
 		queue.add(task);
 	}
-	
+	/*
+	 * shortest job first scheduler
+	 */
 	private static void sjf(Task task) { //shortest job first
 		if ( queue.isEmpty() ) {
 			System.out.println("adding " + task.getDuration() + " to the queue at position 0" );
@@ -40,7 +56,9 @@ public class Scheduler {
 		}
 
 	}
-	
+	/*
+	 * inserts the task into the 'queue' based on the duration of the queue
+	 */
 	private static void insert(Task task) {
 		System.out.println("Scanning...");
 		for (int i = 0; i < queue.size(); i++) {
@@ -59,6 +77,13 @@ public class Scheduler {
 		}
 		System.out.println("");
 	}
+	/*
+	 * ran into a problem when a number was greater than in the arraylist.
+	 * you would need to check if the number we want to insert is greater than the current index
+	 * but less than the next index
+	 * however, this lead to out of boudns errors
+	 * just implemented a new method to start from the back of the list and check in reverse
+	 */
 	private static void reverseInsert(Task task) {
 		// TODO Auto-generated method stub
 		for (int i = queue.size(); i >= 0; i--) {
@@ -70,7 +95,9 @@ public class Scheduler {
 		}
 		
 	}
-
+/*
+ * prints the queue
+ */
 	public void printQueue() {
 		System.out.println("End of Sorting\n");
 		System.out.println("\nQueue:\n");
@@ -80,6 +107,10 @@ public class Scheduler {
 		System.out.println("\n");
 	}
 
+	/*
+	 * retrieval and removal of tasks are done atomically
+	 * synchronized flag will only let one thread into this method at a time
+	 */
 	public synchronized Task getTask() {
 		if (!queue.isEmpty()) {
 			Task tempTask = queue.get(0);
@@ -94,7 +125,9 @@ public class Scheduler {
 		
 		
 	}
-
+/*
+ * checks if the queue is empty
+ */
 	public boolean empty() {
 		// TODO Auto-generated method stub
 		return queue.isEmpty();

@@ -24,7 +24,9 @@ public class Processor extends Thread {
 		}
 
 	}
-	
+	/*
+	 * Creates the specified number of cpus/threads
+	 */
 	private static void createCPUs(int count) {
 		// TODO Auto-generated method stub
 		for (int i = 0; i < count; i++) {
@@ -32,6 +34,9 @@ public class Processor extends Thread {
 			cpuArr.add(cpu);
 		}
 	}
+	/*
+	 * used to sleep a thread for the duration of the task
+	 */
 	public void zzz(long duration) {
 		try {
 			TimeUnit.MILLISECONDS.sleep(duration);
@@ -40,12 +45,21 @@ public class Processor extends Thread {
 			e.printStackTrace();
 		}
 	}
+	/*
+	 * accessor for name
+	 */
 	public String threadName() {
 		return name;
 	}
+	/*
+	 * constructor
+	 */
 	public Processor(String name) {
 		this.name = name;
 	}
+	/*
+	 * prints the CPU statistics
+	 */
 	public static void printTiming() {
 		System.out.println("\n---------------------------------------------------------------");
 		System.out.println("\nNumber of Processors: " + CPUS);
@@ -55,12 +69,18 @@ public class Processor extends Thread {
 
 		
 	}
+	/*
+	 * Run method for the threads
+	 */
 	public void run() {
 		Task task = null;
 		while (!sched.empty()) {
 	 		task = sched.getTask();
 //	 		zzz(900);
 
+	 		/*
+	 		 * Provides updates as the threads pull tasks
+	 		 */
 			System.out.println(this.name + " pulled a " + task.getDuration() + "mS task.");
 			zzz(task.getDuration());
 			task.setCompletionTime();
@@ -68,6 +88,9 @@ public class Processor extends Thread {
 			System.out.println(this.name + " completed the task.");
 			task.individualStats();
 		}
+		/*
+		 * once all cpus are no longer active, print the statistics
+		 */
 		active_cpus--;
 		if (active_cpus == 0) {
 			task.totalStats();
