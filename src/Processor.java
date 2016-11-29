@@ -2,8 +2,8 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class Processor extends Thread {
-	final static int NUMOFTASKS = 10;
-	final static int CPUS = 4;
+	final static int NUMOFTASKS = 500;
+	final static int CPUS = 16;
 	static int active_cpus = CPUS;
 	static ArrayList<Processor> cpuArr = new ArrayList<Processor>();
 	static long startTime;
@@ -75,18 +75,34 @@ public class Processor extends Thread {
 	public void run() {
 		Task task = null;
 		while (!sched.empty()) {
+			System.out.println(this.name + " getting a task...");
 	 		task = sched.getTask();
 //	 		zzz(900);
 
 	 		/*
 	 		 * Provides updates as the threads pull tasks
 	 		 */
-			System.out.println(this.name + " pulled a " + task.getDuration() + "mS task.");
-			zzz(task.getDuration());
-			task.setCompletionTime();
-			task.calcTurnaroundTime();
-			System.out.println(this.name + " completed the task.");
-			task.individualStats();
+			//System.out.println(this.name + " pulled a " + task.getDuration() + "mS task.");
+			if (sched.schedSelection == 1 || sched.schedSelection == 2) {
+				zzz(task.getDuration());
+				task.setCompletionTime();
+				task.calcTurnaroundTime();
+				System.out.println(this.name + " completed the task.");
+				task.individualStats();
+			} else if (sched.schedSelection == 3) {
+				zzz(sched.TIMESLICE);
+				if (task.getDuration() <= 0) {
+					task.setCompletionTime();
+					task.calcTurnaroundTime();
+					System.out.println(this.name + " completed the task.");
+					task.individualStats();
+				} else if (task.getDuration() > 0) {
+					sched.insert(task);
+				} else {
+					System.out.println("Task " + task.name + " has " + task.getDuration() + "mS remaining...");
+				}
+			}
+
 		}
 		/*
 		 * once all cpus are no longer active, print the statistics

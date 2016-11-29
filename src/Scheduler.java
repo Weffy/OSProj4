@@ -3,7 +3,12 @@ import java.util.*;
 
 public class Scheduler {
 	static ArrayList<Task> queue = new ArrayList<Task>();
-	
+	//No selection: 0
+	//fifo: 1
+	//sjf: 2
+	//stcf: 3
+	static int schedSelection = 0;
+	final static int TIMESLICE = 100;
 	/*
 	 * I suppose I could've just put all of the contents of createTasks in the constructor here
 	 * could go back and clean up by doing so...
@@ -24,7 +29,8 @@ public class Scheduler {
 			Task task = new Task(random, quantity, i);
 			System.out.println("new task created: " + task.getDuration());
 //			fifo(task);
-			sjf(task);
+//			sjf(task);
+			stcf(task);
 
 		}
 	}
@@ -33,7 +39,7 @@ public class Scheduler {
 	 */
 	private static int rng() {
 		Random rand = new Random();
-		int randomNumber = rand.nextInt(10000) + 1;
+		int randomNumber = rand.nextInt(1000) + 1;
 		return randomNumber;
 	}
 	
@@ -41,12 +47,15 @@ public class Scheduler {
 	 * first in, first out scheduler
 	 */
 	private static void fifo(Task task) {
+		schedSelection = 1;
 		queue.add(task);
 	}
 	/*
 	 * shortest job first scheduler
 	 */
 	private static void sjf(Task task) { //shortest job first
+		schedSelection = 2;
+
 		if ( queue.isEmpty() ) {
 			System.out.println("adding " + task.getDuration() + " to the queue at position 0" );
 			queue.add(task);
@@ -56,10 +65,23 @@ public class Scheduler {
 		}
 
 	}
+	
+	private static void stcf(Task task) {
+		schedSelection = 3;
+
+		if ( queue.isEmpty() ) {
+			System.out.println("adding " + task.getDuration() + " to the queue at position 0" );
+			queue.add(task);
+		} else {
+			insert(task);
+		}
+	}
+	
+	
 	/*
 	 * inserts the task into the 'queue' based on the duration of the queue
 	 */
-	private static void insert(Task task) {
+	public synchronized static void insert(Task task) {
 		System.out.println("Scanning...");
 		for (int i = 0; i < queue.size(); i++) {
 			System.out.println("Check index: " + i);
@@ -84,7 +106,7 @@ public class Scheduler {
 	 * however, this lead to out of boudns errors
 	 * just implemented a new method to start from the back of the list and check in reverse
 	 */
-	private static void reverseInsert(Task task) {
+	private synchronized static void reverseInsert(Task task) {
 		// TODO Auto-generated method stub
 		for (int i = queue.size(); i >= 0; i--) {
 			if (task.getDuration() > queue.get(i-1).getDuration() ) {
@@ -116,8 +138,24 @@ public class Scheduler {
 			Task tempTask = queue.get(0);
 			queue.get(0).setStartStime();
 			queue.get(0).calcResponseTime();
-			queue.remove(0);
-			return tempTask;
+			if (schedSelection == 1 || schedSelection == 2) {
+				queue.remove(0);
+				return tempTask;
+				
+			} else if (schedSelection == 3) {
+				queue.remove(0);
+				System.out.println("Duration: " + tempTask.duration + "\nTimeslice: " + TIMESLICE);
+				tempTask.duration = tempTask.duration - TIMESLICE;
+				return tempTask;
+//				if (tempTask.duration > 0) {
+//					System.out.println("re-adding " + tempTask.getDuration());
+//					insert(tempTask);
+//					return tempTask;
+//				} else if (tempTask.duration <= 0) {
+//					System.out.println("About to crash...");
+//				}
+				
+			}
 		}
 		
 		return null;
