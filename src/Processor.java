@@ -2,8 +2,8 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class Processor extends Thread {
-	final static int NUMOFTASKS = 500;
-	final static int CPUS = 16;
+	final static int NUMOFTASKS = 10;
+	final static int CPUS = 2;
 	static int active_cpus = CPUS;
 	static ArrayList<Processor> cpuArr = new ArrayList<Processor>();
 	static long startTime;
@@ -97,17 +97,20 @@ public class Processor extends Thread {
 					System.out.println(this.name + " completed the task.");
 					task.individualStats();
 				} else if (task.getDuration() > 0) {
-					sched.insert(task);
+					System.out.println("Duration greater than 0");
+					sched.stcf(task);
+					continue;
 				} else {
 					System.out.println("Task " + task.name + " has " + task.getDuration() + "mS remaining...");
 				}
 			}
-
+			System.out.println(this.name + " at the end of the loop...");
 		}
 		/*
 		 * once all cpus are no longer active, print the statistics
 		 */
 		active_cpus--;
+		System.out.println("Active CPUS: " + active_cpus);
 		if (active_cpus == 0) {
 			task.totalStats();
 			endTime = System.currentTimeMillis();

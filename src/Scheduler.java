@@ -8,7 +8,7 @@ public class Scheduler {
 	//sjf: 2
 	//stcf: 3
 	static int schedSelection = 0;
-	final static int TIMESLICE = 100;
+	final static int TIMESLICE = 1500;
 	/*
 	 * I suppose I could've just put all of the contents of createTasks in the constructor here
 	 * could go back and clean up by doing so...
@@ -39,21 +39,21 @@ public class Scheduler {
 	 */
 	private static int rng() {
 		Random rand = new Random();
-		int randomNumber = rand.nextInt(1000) + 1;
+		int randomNumber = rand.nextInt(10000) + 1;
 		return randomNumber;
 	}
 	
 	/*
 	 * first in, first out scheduler
 	 */
-	private static void fifo(Task task) {
+	public static void fifo(Task task) {
 		schedSelection = 1;
 		queue.add(task);
 	}
 	/*
 	 * shortest job first scheduler
 	 */
-	private static void sjf(Task task) { //shortest job first
+	public static void sjf(Task task) { //shortest job first
 		schedSelection = 2;
 
 		if ( queue.isEmpty() ) {
@@ -66,7 +66,7 @@ public class Scheduler {
 
 	}
 	
-	private static void stcf(Task task) {
+	public synchronized static void stcf(Task task) {
 		schedSelection = 3;
 
 		if ( queue.isEmpty() ) {
@@ -92,7 +92,14 @@ public class Scheduler {
 				break;
 			} else {
 				System.out.println("rev insert");
-				reverseInsert(task);
+//				reverseInsert(task);
+				for (int j = queue.size(); j >= 0; j--) {
+					if (task.getDuration() > queue.get(j-1).getDuration() ) {
+						System.out.println("adding " + task.getDuration() + " to the queue at position " + j);
+						queue.add(j, task);
+						break;
+					}
+				}
 				break;
 			} 
 
