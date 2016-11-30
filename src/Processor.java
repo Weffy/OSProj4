@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class Processor extends Thread {
-	final static int NUMOFTASKS = 10;
+	final static int NUMOFTASKS = 8;
 	final static int CPUS = 2;
 	static int active_cpus = CPUS;
 	static ArrayList<Processor> cpuArr = new ArrayList<Processor>();

@@ -143,8 +143,11 @@ public class Scheduler {
 	public synchronized Task getTask() {
 		if (!queue.isEmpty()) {
 			Task tempTask = queue.get(0);
-			queue.get(0).setStartStime();
-			queue.get(0).calcResponseTime();
+			if (tempTask.startTime == 0) {
+				queue.get(0).setStartStime();
+				queue.get(0).calcResponseTime();
+			}
+
 			if (schedSelection == 1 || schedSelection == 2) {
 				queue.remove(0);
 				return tempTask;
