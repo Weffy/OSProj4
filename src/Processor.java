@@ -2,8 +2,8 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class Processor extends Thread {
-	final static int NUMOFTASKS = 8;
-	final static int CPUS = 2;
+	final static int NUMOFTASKS = 16;
+	final static int CPUS = 4;
 	static int active_cpus = CPUS;
 	static ArrayList<Processor> cpuArr = new ArrayList<Processor>();
 	static long startTime;
@@ -98,7 +98,7 @@ public class Processor extends Thread {
 					task.individualStats();
 				} else if (task.getDuration() > 0) {
 					System.out.println("Duration greater than 0");
-					sched.stcf(task);
+					sched.roundRobin(task);
 					continue;
 				} else {
 					System.out.println("Task " + task.name + " has " + task.getDuration() + "mS remaining...");

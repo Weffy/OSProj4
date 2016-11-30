@@ -6,7 +6,8 @@ public class Scheduler {
 	//No selection: 0
 	//fifo: 1
 	//sjf: 2
-	//stcf: 3
+	//rr: 3
+
 	static int schedSelection = 0;
 	final static int TIMESLICE = 1500;
 	/*
@@ -30,7 +31,7 @@ public class Scheduler {
 			System.out.println("new task created: " + task.getDuration());
 //			fifo(task);
 //			sjf(task);
-			stcf(task);
+			roundRobin(task);
 
 		}
 	}
@@ -66,17 +67,17 @@ public class Scheduler {
 
 	}
 	
-	public synchronized static void stcf(Task task) {
-		schedSelection = 3;
 
+	public synchronized static void roundRobin(Task task) {
+		schedSelection = 3;
 		if ( queue.isEmpty() ) {
 			System.out.println("adding " + task.getDuration() + " to the queue at position 0" );
 			queue.add(task);
 		} else {
-			insert(task);
+			System.out.println("adding " + task.getDuration() + " to the back of the queue.");
+			queue.add(task);
 		}
 	}
-	
 	
 	/*
 	 * inserts the task into the 'queue' based on the duration of the queue
@@ -113,17 +114,17 @@ public class Scheduler {
 	 * however, this lead to out of boudns errors
 	 * just implemented a new method to start from the back of the list and check in reverse
 	 */
-	private synchronized static void reverseInsert(Task task) {
-		// TODO Auto-generated method stub
-		for (int i = queue.size(); i >= 0; i--) {
-			if (task.getDuration() > queue.get(i-1).getDuration() ) {
-				System.out.println("adding " + task.getDuration() + " to the queue at position " + i);
-				queue.add(i, task);
-				break;
-			}
-		}
-		
-	}
+//	private synchronized static void reverseInsert(Task task) {
+//		// TODO Auto-generated method stub
+//		for (int i = queue.size(); i >= 0; i--) {
+//			if (task.getDuration() > queue.get(i-1).getDuration() ) {
+//				System.out.println("adding " + task.getDuration() + " to the queue at position " + i);
+//				queue.add(i, task);
+//				break;
+//			}
+//		}
+//		
+//	}
 /*
  * prints the queue
  */
@@ -157,14 +158,6 @@ public class Scheduler {
 				System.out.println("Duration: " + tempTask.duration + "\nTimeslice: " + TIMESLICE);
 				tempTask.duration = tempTask.duration - TIMESLICE;
 				return tempTask;
-//				if (tempTask.duration > 0) {
-//					System.out.println("re-adding " + tempTask.getDuration());
-//					insert(tempTask);
-//					return tempTask;
-//				} else if (tempTask.duration <= 0) {
-//					System.out.println("About to crash...");
-//				}
-				
 			}
 		}
 		
