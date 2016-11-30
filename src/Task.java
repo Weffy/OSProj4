@@ -83,7 +83,7 @@ public class Task {
 		System.out.println("\n---------------------------------------------------------------");
 		System.out.println("\nTask stats:");
 		System.out.println("Total Tasks: " + count);
-		System.out.println("task_" + this.name + ":\nResponse Time: " + responseTime);
+//		System.out.println("task_" + this.name + ":\nResponse Time: " + responseTime);
 		System.out.println("Average Response Time: " + (totalResponse / count) + " mS.");
 		System.out.println("Average Turnaround Time: " + (totalTurnaround / count) + " mS.");
 		System.out.println("Average Duration Per Task: " + (totalLength / count) + " mS.");
